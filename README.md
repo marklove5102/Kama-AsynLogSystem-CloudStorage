@@ -1,148 +1,111 @@
-# Kama-AsynLogSystem
 
-⭐️ **本项目为【代码随想录知识星球】 教学项目**   
+# C++项目推荐：基于异步日志系统的云存储 | 代码随想录
 
-⭐️ **在 [基于异步日志系统云存储项目专栏](https://www.programmercarl.com/other/project_nibu.html) 里详细讲解**：项目前置知识 + 项目细节 + 代码解读 + 项目难点 + 面试题与回答 + 简历写法 + 项目拓展。 全面帮助你用这个项目求职面试！
+> **本项目目前只在[知识星球](https://programmercarl.com/other/kstar.html)答疑并维护**。
+
+这次带大家做一个全新的C++项目：基于异步日志系统的云存储。
+
+这个项目主要有两个部分：
+
+日志部分：
+1. 支持异步写日志，防止写日志阻塞外部业务逻辑
+2. 支持备份重要日志，防止crush后无法debug
+3. 支持多线程程序并发写日志
+4. 支持输出日志到控制台、文件以及按照文件大小滚动文件中，文件大小可配置
+
+存储部分：
+1. 是一个类似于网盘的项目
+2. 支持浅度存储和深度存储
+3. web端上传下载
+
+其实这个项目可以拆成两个项目，一个是异步日志系统，一个是云存储。
+
+为什么要结合一些？
+
+主要是亮点：
+
+* 带大家感受一下，异步日志系统 如何嫁接在另一个系统上
+* 这个项目更丰满，符合星球里 四星的标准！
+
+为什么要做这个项目呢。 首先来聊一聊 日志系统的重要性。
+
+日志系统在软件开发中作用主要在代码编写和调试以及项目启动后的系统运行状况记录。
+
+能够详细记录程序的执行流程、变量的值以及函数的调用情况等，所需要的任何信息都可以通过日志来获取。
+
+由于日志系统在项目的整个生命周期中都有着不可替代的作用，**因此可以说任何项目都可以并且应该集成日志系统以便debug，性能分析等操作**。
+
+也就是说**设计好日志系统 可以嫁接到 所有C++项目里**。
+
+就拿星球里目前的C++项目来举例，例如：
+
+* 基于异步日志系统的 [HTTP服务框架（C++）](https://programmercarl.com/other/project_http.html)
+* 基于异步日志系统的[手撕RPC框架（新项目）（C++）](https://programmercarl.com/other/project_C++RPC.html)
+* 基于异步日志系统的[分布式存储项目（第二版）（C++）](https://programmercarl.com/other/project_fenbushi.html)
+* 基于异步日志系统的[轻量级网络库muduo（第二版）（C++）](https://programmercarl.com/other/project_muduo.html)
+* 基于异步日志系统的[高性能服务器项目（C++）](https://programmercarl.com/other/project_webserver.html)
+
+等等等， 写好异步日志系统，可以嫁接到所有的项目里，为项目添加亮点毕竟所有的项目都需要打日志！
+
+**如果感觉你自己的项目没有亮点可说，那么就可以在项目里添加个异步日志系统，增加亮点**！
+
+## 基于异步日志系统的云存储项目精讲
 
 
-## 项目概述
+该项目的专栏是[知识星球](https://programmercarl.com/other/kstar.html)录友专享的。
 
-本项目基于**libevent**网络库实现文件上传服务，支持上传下载和展示功能，支持多种存储等级的存储服务，并携带了异步日志系统，支持备份重要日志，多线程并发写日志等功能。
-src下的client为win客户端，可以不实现，直接使用web端与服务端交互。
+项目专栏依然是将 「简历写法」给大家列出来了，大家学完就可以参考这个来写简历：
 
-## 环境准备
+给出一般写法，适用于 基础不太好的录友写：
 
-Ubuntu22.04 LTS
+<div align="center"><img src='https://file1.kamacoder.com/i/algo/20250325110714.png' width=500 alt=''></img></div>
 
-g++安装
+给出高阶写法，适用于 想冲刺大厂的录友写：
 
-```bash
-sudo update
-sudo apt install g++
-```
+<div align="center"><img src='https://file1.kamacoder.com/i/algo/20250325110743.png' width=500 alt=''></img></div>
 
-### 日志部分
+做完该项目，面试中大概率会有哪些面试问题，以及如何回答，也列出好了：
 
-#### 1. jsoncpp
+<div align="center"><img src='https://file1.kamacoder.com/i/algo/20250325110819.png' width=500 alt=''></img></div>
 
-```bash
-sudo apt-get libjsoncpp-dev
-其头文件所在路径是：/usr/include/jsoncpp/json
-动态库在：/usr/lib/x86_64-linux-gnu/libjsoncpp.so-版本号
-编译时需要根据动态库的路径进行正确的设置，否则很容易出现“undefined reference to”问题。
-使用g++编译时直接加上“-ljsoncpp”选项即可。
-```
+专栏中的项目面试题都掌握的话，这个项目在面试中基本没问题。
 
-### 存储部分
+很多录友在做项目的时候，把项目运行起来 就是第一大难点！
 
-### 服务端
+不少录友对日志系统还不了解，所以我们先从最基本的日志系统开始讲解，然后再讲异步日志：
 
-#### 1. libevent
+<div align="center"><img src='https://file1.kamacoder.com/i/algo/20250325110957.png' width=500 alt=''></img></div>
 
-Linux下安装方法：
+日志系统主要有四大点：日志记录器、日志级别、日志格式化器、日志输出器 ：
 
-```bash
-sudo apt-get update
-sudo apt-get install build-essential autoconf automake
-sudo apt-get install libssl-dev
-./configure
-wget https://github.com/libevent/libevent/releases/download/release-2.1.12-stable/libevent-2.1.12-stable.tar.gz
-tar xvf libevent-2.1.12-stable.tar.gz  //解压下载的源码压缩包，目录下会生成一个libevent-2.1.12-stable目录
-cd libevent-2.1.12-stable                 //切换到libevent-2.1.12-stable目录,(安装步骤可以查看README.md文件)
-./configure                                     //生成Makefile文件，用ll Makefile可以看到Makefile文件已生成
-make                                          //编译
-sudo make install                            //安装
+<div align="center"><img src='https://file1.kamacoder.com/i/algo/20250325111033.png' width=500 alt=''></img></div>
 
-# 最后检测是否成功安装
-cd sample     //切换到sample目录
-./hello-world   //运行hello-world可执行文件
-# 新建一个终端，输入以下代码
-nc 127.1 9995 //若安装成功，该终端会返回一个Hello, World!
-```
+接下来再讲 基于异步日志系统的云存储整体框架：
 
-#### 2. jsoncpp
+<div align="center"><img src='https://file1.kamacoder.com/i/algo/20250325111140.png' width=500 alt=''></img></div>
 
-日志部分已经安装
+图文并茂：
 
-#### 3. bundle
+<div align="center"><img src='https://file1.kamacoder.com/i/algo/20250325111217.png' width=500 alt=''></img></div>
 
-源码链接：https://github.com/r-lyeh-archived/bundle
+我们这个项目是有页面的： （C++项目很少有页面，主要是本项目是云存储，我们从web端上传和下载文件）
 
-克隆下来包含bundle.cpp与bundle.h即可使用 
-#### 4. cpp-base64
-`git clone https://github.com/ReneNyffenegger/cpp-base64.git`
-之后把该目录内的base64.h和.cpp文件拷贝到本项目文件server/src下即可使用
+<div align="center"><img src='https://file1.kamacoder.com/i/algo/20250325111254.png' width=500 alt=''></img></div>
 
-### web端
-ip+port即可访问
+最后也给出项目的拓展方向，大家如果学有余力，可以自行去拓展，不断深挖：
 
-### 客户端Win(可选实现，与服务端实现类似)
-#### 1. libevent
+<div align="center"><img src='https://file1.kamacoder.com/i/algo/20250325111409.png' width=500 alt=''></img></div>
 
-Win的话会麻烦不少。提前准备工具：
+## 答疑
 
-[libevent直接在这里面下，2.1.12-stable版本](https://libevent.org/)
+本项目在[知识星球](https://programmercarl.com/other/kstar.html)里为 文字专栏形式，大家不用担心，看不懂，星球里每个项目有专属答疑群，任何问题都可以在群里问，都会得到解答：
 
-[安装vs2019之后](https://blog.csdn.net/adminstate/article/details/128939556)
+![](https://file1.kamacoder.com/i/web/2025-09-26_11-30-13.jpg)
 
-[在openssl的github获取源码，把zip文件下载下来](https://github.com/openssl/openssl)
 
-[Perl安装地址](http://www.ffmpeg.club/libevent.html)
+## 获取本项目专栏
 
-[nasm安装地址，网盘里有3个，选那个win32的](http://www.ffmpeg.club/libevent.html)，这里从网盘下载后就ok了，然后把nasm的路径加到环境变量里
+**本文档仅为星球内部专享，大家可以加入[知识星球](https://programmercarl.com/other/kstar.html)里获取，在星球置顶一**
 
-安装perl时，选择Complete安装选项，之后直接一路next就好!
 
-```bash
-# 使用以下命令验证是否成功安装
-nasm --version  
-perl --version
-```
 
-然后使用Win的搜索，输入vs 2019,找到x64_x86 Cross Tools CommandPrompt for Vs 2019，以管理员身份打开
-
-进入到openssl的源码目录下执行编译安装openssl
-
-```bash
-perl Configure VC-WIN32 --prefix=D:\software\openssl_output#自己改路径，这个路径是你指定的openssl的安装路径
-nmake #这命令时间比较长
-nmake install #这个时间会比较长
-```
-
-执行完上述命令后你将会在D:\software\openssl_output路径下得到，这个路径就是openssl的安装路径了，存放了一些静态库，可执行文件啥的。把openssl可执行文件的路径添加到环境变量不然后面执行的时候找不到库。
-
-把前面下载的libevent库解压了，然后用前面打开的命令行进入libevent源码的目录执行命令:
-
-```bash
-nmake /f Makefile.nmake OPENSSL_DIR=D:\software\openssl_output
-```
-
-结束后，使用源码目录的test/目录下的regress.exe执行一下，如果成功执行就说明安装成功了，不用等所有测试都显示OK。
-
-如果遇到找不到库或者头文件之类的问题，在自己文件资源管理器里找一下对应的库复制到对应目录下就ok了。比如少了event-config.h，那就复制一份到include/event2/目录下就ok了。
-
-至此安装部分就结束了，但是使用的话需要配置一下vs2019.
-
-首先使用的时候要是x86环境，因为前面编译的库都是x86的
-
-其次，在vs2019的菜单来中点击Debug->Debug Properties->Configuragion Properties->C/C++->General->Additional Include Directories，把你的libevent头文件路径添加进去，即libevent源码目录/include。
-
-然后在C/C++下面的Linker把库路径和库的名字加上：Linker->General->Additional Library Directories 在这里添加你的libevent源码路径。
-
-然后再Linker下点击Input，点击Additional Dependenies ，点击<Edit...>，输入libevent.lib;ws2_32.lib;
-## 运行方式
-先把Kama-AsynLogSystem-CloudStorage/src/server目录下的Storage.conf文件中的下面两个字段配好，如下面，替换成你自己的服务器ip地址和要使用的端口号，（如果使用的是云服务器需要去你买的云服务器示例下开放安全组规则允许外界访问该端口）。
-```
-"server_port" : 8081,
-"server_ip" : "127.0.0.1"
-```
-再把Kama-AsynLogSystem-CloudStorage/log_system/logs_code下的config.conf文件中的如下两个字段配好，这两个字段是备份日志存放的服务器地址和端口号。（这个配置是可选的，如果没有配置，会链接错误，备份日志功能不会被启动，但是不影响其他部分日志系统的功能，本机还是可以正常写日志的）
-```
-"backup_addr" : "47.116.22.222",
-"backup_port" : 8080
-```
-把log_stsytem目录下的backlog目录中的ServerBackupLog.cpp和hpp文件拷贝置另外一个服务器或当前服务器作为备份日志服务器，使用命令`g++ ServerBackupLog.cpp`生成可执行文件，`./a.out 端口号` 即可启动备份日志服务器，这里端口号由输入的端口号决定，要与客户端config.conf里的backup_port字段保持一致。
-
-在Kama-AsynLogSystem-CloudStorage/src/server目录下使用make命令，生成test可执行文件，./test就可以运行起来了。
-打开浏览器输入ip+port即可访问该服务，
-或按照上方可选客户端实现，启动客户端后添加文件到对应文件夹即可上传文件
